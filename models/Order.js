@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 // 📦 This schema defines what an "order" looks like in the database
 const orderSchema = new mongoose.Schema({
-    // 👤 Who placed the order (optional if no login yet)
+    // 👤 Who placed the order
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -17,6 +17,7 @@ const orderSchema = new mongoose.Schema({
                 ref: 'Product',
                 required: true
             },
+            name: { type: String }, // Store product name for easy admin view
             quantity: {
                 type: Number,
                 required: true,
@@ -26,12 +27,20 @@ const orderSchema = new mongoose.Schema({
                 type: Number,
                 required: true,
                 min: 0
-            }
+            },
+            imageUrl: { type: String }
         }
     ],
 
     // 💵 Total bill for the order
     totalAmount: {
+        type: Number,
+        required: true,
+        min: 0
+    },
+
+    // 🚚 Delivery charge
+    deliveryCharge: {
         type: Number,
         required: true,
         min: 0
