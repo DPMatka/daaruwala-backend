@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    username: { type: String, required: true },
+    name: { type: String, required: true }, // changed from username to name
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    phone: { type: String }, // added phone number
     role: { type: String, default: 'customer' },
     deliveryAddresses: [{ type: String }],
 }, { timestamps: true });

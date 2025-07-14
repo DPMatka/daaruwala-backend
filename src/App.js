@@ -1,54 +1,33 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
 
-import Header from './components/Header';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import ShoppingCart from './pages/ShoppingCart';
-import OrderConfirmation from './pages/OrderConfirmation';
-import MyOrders from './pages/MyOrders';
-import ProductDetail from './pages/ProductDetail';
-import Checkout from './pages/Checkout';
+const app = express();
 
-const App = () => {
-  const [cart, setCart] = useState([]);
+// 🟩 Middleware
+app.use(cors());
+app.use(express.json());
 
-  // ✅ Add to cart with quantity
-  const addToCart = (product) => {
-    const existingProduct = cart.find((item) => item._id === product._id);
+// 🟩 MongoDB Connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('✅ MongoDB connected'))
+.catch((err) => console.error('❌ MongoDB connection error:', err));
 
-    if (existingProduct) {
-      setCart(prevCart =>
-        prevCart.map(item =>
-          item._id === product._id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      );
-    } else {
-      setCart(prevCart => [...prevCart, { ...product, quantity: 1 }]);
-    }
+// 🟩 Routes
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes); // Handles: admin login, user login, user registration, get all users
 
-    alert(`✅ ${product.name} added to cart!`);
-  };
+// 🟩 Root route (optional)
+app.get('/', (req, res) => {
+  res.send('🔥 Daaruwala Backend API is running!');
+});
 
-  // ✅ Clear cart after order placed
-  const clearCart = () => setCart([]);
-
-  return (
-    <Router>
-      <Header cartItemCount={cart.length} />
-      <Routes>
-        <Route path="/" element={<Home addToCart={addToCart} />} />
-        <Route path="/product/:productId" element={<ProductDetail addToCart={addToCart} />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/cart" element={<ShoppingCart cart={cart} setCart={setCart} />} />
-        <Route path="/checkout" element={<Checkout cart={cart} clearCart={clearCart} />} />
-        <Route path="/order-confirmation" element={<OrderConfirmation />} />
-        <Route path="/my-orders" element={<MyOrders />} />
-      </Routes>
-    </Router>
-  );
-};
-
-export default App;
+// 🟩 Start Server
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
