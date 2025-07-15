@@ -5,7 +5,7 @@ const Product = require('../models/Product'); // ✅ Required for stock manageme
 const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
-      .populate('userId', 'username email')
+      .populate('userId', 'name email phone') // <-- show name, email, phone
       .populate('items.productId', 'name')
       .sort({ createdAt: -1 });
 
