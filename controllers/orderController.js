@@ -18,14 +18,22 @@ const getAllOrders = async (req, res) => {
 
 // 🛍 Create a new order (user places it from frontend)
 const createOrder = async (req, res) => {
+  // Debug log to see what is received
+  console.log("ORDER RECEIVED:", req.body);
+
   try {
-    const { userId, items, totalAmount, deliveryAddress, contactNumber } = req.body;
+    const { userId, items, totalAmount, deliveryCharge, deliveryAddress, contactNumber } = req.body;
 
     // ✅ Validate required fields
     if (!items || items.length === 0) {
       return res.status(400).json({ message: 'No items in the order.' });
     }
-    if (!totalAmount || !deliveryAddress || !contactNumber) {
+    if (
+      !totalAmount ||
+      deliveryCharge === undefined || // deliveryCharge must be present and a number
+      !deliveryAddress ||
+      !contactNumber
+    ) {
       return res.status(400).json({ message: 'Missing required fields.' });
     }
 
@@ -53,6 +61,7 @@ const createOrder = async (req, res) => {
       userId: userId || null,
       items,
       totalAmount,
+      deliveryCharge, // <-- Make sure this is included!
       deliveryAddress,
       contactNumber,
       status: 'Pending'
