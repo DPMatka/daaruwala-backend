@@ -24,13 +24,16 @@ const createOrder = async (req, res) => {
   try {
     const { userId, items, totalAmount, deliveryCharge, deliveryAddress, contactNumber } = req.body;
 
-    // ✅ Validate required fields
+    // Debug log for types
+    console.log("DEBUG FIELDS:", typeof totalAmount, totalAmount, typeof deliveryCharge, deliveryCharge, deliveryAddress, contactNumber);
+
+    // ✅ Validate required fields (use === undefined for numbers)
     if (!items || items.length === 0) {
       return res.status(400).json({ message: 'No items in the order.' });
     }
     if (
-      !totalAmount ||
-      deliveryCharge === undefined || // deliveryCharge must be present and a number
+      totalAmount === undefined ||
+      deliveryCharge === undefined ||
       !deliveryAddress ||
       !contactNumber
     ) {
@@ -60,8 +63,8 @@ const createOrder = async (req, res) => {
     const newOrder = new Order({
       userId: userId || null,
       items,
-      totalAmount,
-      deliveryCharge, // <-- Make sure this is included!
+      totalAmount: Number(totalAmount),
+      deliveryCharge: Number(deliveryCharge), // <-- force to number
       deliveryAddress,
       contactNumber,
       status: 'Pending'
