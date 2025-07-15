@@ -21,6 +21,9 @@ mongoose.connect(process.env.MONGO_URI, {
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes); // Handles: admin login, user login, user registration, get all users
 
+const orderRoutes = require('./routes/orderRoutes');
+app.use('/api/orders', orderRoutes); // Handles: order placement, order list, order status update
+
 // 🟩 Root route (optional)
 app.get('/', (req, res) => {
   res.send('🔥 Daaruwala Backend API is running!');
