@@ -61,10 +61,16 @@ const userLogin = async (req, res) => {
     // Simulate token (You can return JWT later)
     const token = 'daaruwala-user-token';
 
+    // ✅ THIS IS THE FIX: Send back the user's _id
     res.status(200).json({
       message: "Login successful",
       token,
-      user: { name: user.name, email: user.email, phone: user.phone }
+      user: {
+        _id: user._id, // <-- THIS LINE WAS MISSING
+        name: user.name,
+        email: user.email,
+        phone: user.phone
+      }
     });
   } catch (err) {
     res.status(500).json({ message: "Server error during login" });
